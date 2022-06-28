@@ -9,12 +9,15 @@ import numpy as np
 
 from tqdm import tqdm
 from utils import utils
+from utils.visualize import Visualize
 from base.AdaRNN import AdaRNN
 
 import pretty_errors
 import dataset.data_process as data_process
 import matplotlib.pyplot as plt
 
+import visdom
+vvv = visdom.Visdom(port=8097, env='pred')
 
 def pprint(*text):
     # print with UTC+8 time
@@ -267,6 +270,18 @@ def test_epoch(model, test_loader, prefix='Test'):
     loss_r = loss_r / len(test_loader)
     return loss, loss_1, loss_r
 
+def data_visualization(pred:torch.Tensor, label_reg:torch.Tensor):
+    assert vvv.check_connection()
+    pred = pred.cpu().numpy()
+    label_reg = label_reg.cpu().numpy()
+    vis = Visualize(env='pred')
+    title = 'pred and label_reg'
+    legend = ['pred', 'label_reg']
+    for i in range(pred.shape[0]):
+        vis.plot_line([pred[i],label_reg[i]], i, title, legend)
+    input()
+
+
 
 def test_epoch_inference(model, test_loader, prefix='Test'):
     model.eval()
@@ -281,6 +296,9 @@ def test_epoch_inference(model, test_loader, prefix='Test'):
         feature, label_reg = feature.cuda().float(), label_reg.cuda().float()
         with torch.no_grad():
             pred = model.predict(feature)
+        print('===============')
+        data_visualization(pred,label_reg)
+        print('===============')
         loss = criterion(pred, label_reg)
         loss_r = torch.sqrt(loss)
         loss_1 = criterion_1(pred, label_reg)

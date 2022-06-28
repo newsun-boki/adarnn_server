@@ -57,11 +57,14 @@ if __name__ == '__main__':
     def test():
         vis = Visualize(env='test')
         import time
-        for i in range(10):
+        for i in range(100):
             y = np.random.rand(1, 2)
             title = 'Two values'
             legend = ['value 1', 'value 2']
             vis.plot_line([y[0,0], y[0,1]], i, title, legend)
-            vvv.line(Y=np.array([y[0,0], y[0,1]]).reshape((1,2)), X=np.array([i]),win='test2', update='append')
+            # vvv.line(Y=np.array([y[0,0], y[0,1]]).reshape((1,2)), X=np.array([i]),win='test2', update='append')
             time.sleep(2)
     test()
+
+    #python3 -m visdom.server
+    #python3 visualize.py
