@@ -3,6 +3,7 @@ import os
 import dataset.data_act as data_act
 import pandas as pd
 import dataset.data_weather as data_weather
+import dataset.data_count as data_count
 import datetime
 from base.loss_transfer import TransferLoss
 import torch
@@ -127,4 +128,26 @@ def load_weather_data_multi_domain(file_path, batch_size=6, station='Changping',
                                                      end_time='2016-10-30 23:0', batch_size=batch_size, mean=mean_train, std=std_train)
     test_loader = data_weather.get_weather_data(data_file, station=station, start_time='2016-11-2 0:0',
                                                 end_time='2017-2-28 23:0', batch_size=batch_size, mean=mean_train, std=std_train, shuffle=False)
+    return train_list, valid_vld_loader, test_loader
+
+def load_count_data_multi_domain(file_path, batch_size=6, number_domain=2, mode='pre_process', dis_type ='coral'):
+    # mode: 'tdc', 'pre_process'
+    data_file = os.path.join(file_path, "3_daily_count_1.csv")
+    mean_train, std_train = data_count.get_count_data_statistic(data_file, start_index=0,
+                                                                    end_index=300)#len(data) = 361
+    split_time_list = data_count.get_split_time(number_domain, mode=mode, data_file =data_file, dis_type = dis_type)
+    print(split_time_list)
+    train_list = []
+    for i in range(len(split_time_list)):
+        time_temp = split_time_list[i]
+        print('time_temp:',time_temp)
+        train_loader = data_count.get_count_data(data_file, start_time=time_temp[0],
+                                                     end_time=time_temp[1], batch_size=batch_size, mean=mean_train, std=std_train)
+        train_list.append(train_loader)
+
+    valid_vld_loader = data_count.get_count_data(data_file, start_time=301,
+                                                     end_time=330, batch_size=batch_size, mean=mean_train, std=std_train)
+    test_loader = data_count.get_count_data(data_file, start_time=331,
+                                                end_time=360, batch_size=batch_size, mean=mean_train, std=std_train, shuffle=False)
+    print('test_loader',test_loader)                 
     return train_list, valid_vld_loader, test_loader

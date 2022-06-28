@@ -19,13 +19,26 @@ The procossed .pkl files contains three arraies: 'feature', 'label', and 'label_
 
 
 ## How to run
+Before you run any script, you have to run 
+```bash
+python3 -m visdom.server
+```
+in another terminal to enable visualization.
 
 The code for air-quality dataset is in `train_weather.py`. After downloading the dataset, you can change args.data_path in `train_weather.py` to the folder where you place the data.
 
 Then you can run the code. Taking Dongsi station as example, you can run 
-
-`python3 train_weather.py --model_name 'AdaRNN' --station 'Dongsi' --pre_epoch 40 --dw 0.5 --loss_type 'adv' --data_mode 'tdc' --data_path dataset`
+```bash
+python3 train_weather.py --model_name 'AdaRNN' --station 'Dongsi' --pre_epoch 40 --dw 0.5 --loss_type 'adv' --data_mode 'tdc' --data_path dataset
+```
 
 For transformer model, the adapted transformer model is in `transformer_adapt.py`, you can run,
-`python3 transformer_adapt.py  --station 'Tiantan' --dw 1.0`
+```bash
+python3 transformer_adapt.py  --station 'Tiantan' --dw 1.0
+```
+
+You can also use another dataset,`3_daily_count_1.csv`, you can run
+```bash
+python3 train_weather.py --model_name 'AdaRNN'  --pre_epoch 40 --dw 0.5 --loss_type 'adv' --data_mode 'tdc' --data_path dataset --batch_size 12 --d_feat 1 --dataset count
+```
 

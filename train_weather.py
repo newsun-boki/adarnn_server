@@ -65,7 +65,6 @@ def train_AdaRNN(args, model, optimizer, train_loader_list, epoch, dist_old=None
                 break
         if flag:
             continue
-
         total_loss = torch.zeros(1).cuda()
         for i in range(len(index)):
             feature_s = list_feat[index[i][0]]#batch len_seq feature
@@ -277,7 +276,7 @@ def data_visualization(pred:torch.Tensor, label_reg:torch.Tensor):
     vis = Visualize(env='pred')
     title = 'pred and label_reg'
     legend = ['pred', 'label_reg']
-    for i in range(pred.shape[0]):
+    for i in range(pred.shape[0] - 1):
         vis.plot_line([pred[i],label_reg[i]], i, title, legend)
     input()
 
@@ -296,9 +295,7 @@ def test_epoch_inference(model, test_loader, prefix='Test'):
         feature, label_reg = feature.cuda().float(), label_reg.cuda().float()
         with torch.no_grad():
             pred = model.predict(feature)
-        print('===============')
         data_visualization(pred,label_reg)
-        print('===============')
         loss = criterion(pred, label_reg)
         loss_r = torch.sqrt(loss)
         loss_1 = criterion_1(pred, label_reg)
@@ -362,10 +359,14 @@ def main_transfer(args):
         '_' + str(args.dw) + '_' + str(args.lr) + '.pkl'
     utils.dir_exist(output_path)
     pprint('create loaders...')
-
-    train_loader_list, valid_loader, test_loader = data_process.load_weather_data_multi_domain(
-        args.data_path, args.batch_size, args.station, args.num_domain, args.data_mode)
-
+    if args.dataset == 'weather':
+        train_loader_list, valid_loader, test_loader = data_process.load_weather_data_multi_domain(
+            args.data_path, args.batch_size, args.station, args.num_domain, args.data_mode)
+    elif args.dataset == 'count':
+        train_loader_list, valid_loader, test_loader = data_process.load_count_data_multi_domain(
+            args.data_path, args.batch_size, args.num_domain, args.data_mode)
+    else:
+        pprint('wrong dataset')
     args.log_file = os.path.join(output_path, 'run.log')
     pprint('create model...')
     model = get_model(args.model_name)
@@ -465,6 +466,7 @@ def get_args():
     parser.add_argument('--log_file', type=str, default='run.log')
     parser.add_argument('--gpu_id', type=int, default=0)
     parser.add_argument('--len_win', type=int, default=0)
+    parser.add_argument('--dataset', type=str, default='weather')#weather or count
     args = parser.parse_args()
 
     return args
