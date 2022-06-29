@@ -295,7 +295,10 @@ def test_epoch_inference(model, test_loader, prefix='Test'):
         feature, label_reg = feature.cuda().float(), label_reg.cuda().float()
         with torch.no_grad():
             pred = model.predict(feature)
-        data_visualization(pred,label_reg)
+        # data_visualization(pred,label_reg)
+        for j in range(pred.shape[0]):
+            print(pred[j].item())
+            # print(label_reg[j].item())
         loss = criterion(pred, label_reg)
         loss_r = torch.sqrt(loss)
         loss_1 = criterion_1(pred, label_reg)
@@ -331,11 +334,12 @@ def inference_all(output_path, model, model_path, loaders):
     i = 0
     list_name = ['train', 'valid', 'test']
     for loader in loaders:
-        loss, loss_1, loss_r, label_list, predict_list = inference(
-            model, loader)
-        loss_list.append(loss)
-        loss_l1_list.append(loss_1)
-        loss_r_list.append(loss_r)
+        if i == 2 :
+            loss, loss_1, loss_r, label_list, predict_list = inference(
+                model, loader)
+            loss_list.append(loss)
+            loss_l1_list.append(loss_1)
+            loss_r_list.append(loss_r)
         i = i + 1
     return loss_list, loss_l1_list, loss_r_list
 
@@ -421,12 +425,12 @@ def main_transfer(args):
     loaders = train_loader_list[0], valid_loader, test_loader
     loss_list, loss_l1_list, loss_r_list = inference_all(output_path, model, os.path.join(
         output_path, save_model_name), loaders)
-    pprint('MSE: train %.6f, valid %.6f, test %.6f' %
-           (loss_list[0], loss_list[1], loss_list[2]))
-    pprint('L1:  train %.6f, valid %.6f, test %.6f' %
-           (loss_l1_list[0], loss_l1_list[1], loss_l1_list[2]))
-    pprint('RMSE: train %.6f, valid %.6f, test %.6f' %
-           (loss_r_list[0], loss_r_list[1], loss_r_list[2]))
+    # pprint('MSE: train %.6f, valid %.6f, test %.6f' %
+    #        (loss_list[0], loss_list[1], loss_list[2]))
+    # pprint('L1:  train %.6f, valid %.6f, test %.6f' %
+    #        (loss_l1_list[0], loss_l1_list[1], loss_l1_list[2]))
+    # pprint('RMSE: train %.6f, valid %.6f, test %.6f' %
+    #        (loss_r_list[0], loss_r_list[1], loss_r_list[2]))
     pprint('Finished.')
 
 
@@ -436,9 +440,9 @@ def get_args():
 
     # model
     parser.add_argument('--model_name', default='AdaRNN')
-    parser.add_argument('--d_feat', type=int, default=6)
+    parser.add_argument('--d_feat', type=int, default=6)#1
 
-    parser.add_argument('--hidden_size', type=int, default=64)
+    parser.add_argument('--hidden_size', type=int, default=32)
     parser.add_argument('--num_layers', type=int, default=2)
     parser.add_argument('--dropout', type=float, default=0.0)
     parser.add_argument('--class_num', type=int, default=1)
@@ -446,7 +450,7 @@ def get_args():
 
     # training
     parser.add_argument('--n_epochs', type=int, default=200)
-    parser.add_argument('--lr', type=float, default=5e-4)
+    parser.add_argument('--lr', type=float, default=5e-3)
     parser.add_argument('--early_stop', type=int, default=40)
     parser.add_argument('--smooth_steps', type=int, default=5)
     parser.add_argument('--batch_size', type=int, default=36)

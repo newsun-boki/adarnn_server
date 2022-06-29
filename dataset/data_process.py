@@ -147,7 +147,6 @@ def load_count_data_multi_domain(file_path, batch_size=6, number_domain=2, mode=
 
     valid_vld_loader = data_count.get_count_data(data_file, start_time=301,
                                                      end_time=330, batch_size=batch_size, mean=mean_train, std=std_train)
-    test_loader = data_count.get_count_data(data_file, start_time=331,
+    test_loader = data_count.get_count_data(data_file, start_time=0,
                                                 end_time=360, batch_size=batch_size, mean=mean_train, std=std_train, shuffle=False)
-    print('test_loader',test_loader)                 
     return train_list, valid_vld_loader, test_loader
