@@ -105,7 +105,8 @@ class AdaRNN(nn.Module):
              self.model_type == 'AdaRNN') else None
         for i in range(self.num_layers):
             out, _ = self.features[i](x_input.float())
-            x_input = out# batch*2 len_seq h_out           out_lis.append(out)
+            x_input = out# batch*2 len_seq h_out           
+            out_lis.append(out)
             if self.model_type == 'AdaRNN' and predict == False:
                 out_gate = self.process_gate_weight(x_input, i)# len_seq
                 out_weight_list.append(out_gate)

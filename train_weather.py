@@ -296,8 +296,8 @@ def test_epoch_inference(model, test_loader, prefix='Test'):
         with torch.no_grad():
             pred = model.predict(feature)
         # data_visualization(pred,label_reg)
-        for j in range(pred.shape[0]):
-            print(pred[j].item())
+        # for j in range(pred.shape[0]):
+        #     print(pred[j].item())
             # print(label_reg[j].item())
         loss = criterion(pred, label_reg)
         loss_r = torch.sqrt(loss)
@@ -334,12 +334,11 @@ def inference_all(output_path, model, model_path, loaders):
     i = 0
     list_name = ['train', 'valid', 'test']
     for loader in loaders:
-        if i == 2 :
-            loss, loss_1, loss_r, label_list, predict_list = inference(
-                model, loader)
-            loss_list.append(loss)
-            loss_l1_list.append(loss_1)
-            loss_r_list.append(loss_r)
+        loss, loss_1, loss_r, label_list, predict_list = inference(
+            model, loader)
+        loss_list.append(loss)
+        loss_l1_list.append(loss_1)
+        loss_r_list.append(loss_r)
         i = i + 1
     return loss_list, loss_l1_list, loss_r_list
 
@@ -425,12 +424,12 @@ def main_transfer(args):
     loaders = train_loader_list[0], valid_loader, test_loader
     loss_list, loss_l1_list, loss_r_list = inference_all(output_path, model, os.path.join(
         output_path, save_model_name), loaders)
-    # pprint('MSE: train %.6f, valid %.6f, test %.6f' %
-    #        (loss_list[0], loss_list[1], loss_list[2]))
-    # pprint('L1:  train %.6f, valid %.6f, test %.6f' %
-    #        (loss_l1_list[0], loss_l1_list[1], loss_l1_list[2]))
-    # pprint('RMSE: train %.6f, valid %.6f, test %.6f' %
-    #        (loss_r_list[0], loss_r_list[1], loss_r_list[2]))
+    pprint('MSE: train %.6f, valid %.6f, test %.6f' %
+           (loss_list[0], loss_list[1], loss_list[2]))
+    pprint('L1:  train %.6f, valid %.6f, test %.6f' %
+           (loss_l1_list[0], loss_l1_list[1], loss_l1_list[2]))
+    pprint('RMSE: train %.6f, valid %.6f, test %.6f' %
+           (loss_r_list[0], loss_r_list[1], loss_r_list[2]))
     pprint('Finished.')
 
 

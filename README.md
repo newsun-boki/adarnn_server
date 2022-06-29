@@ -39,6 +39,6 @@ python3 transformer_adapt.py  --station 'Tiantan' --dw 1.0
 
 You can also use another dataset,`3_daily_count_1.csv`, you can run
 ```bash
-python3 train_weather.py --model_name 'AdaRNN'  --pre_epoch 40 --dw 0.5 --loss_type 'adv' --data_mode 'tdc' --data_path dataset --batch_size 10 --d_feat 1 --dataset count
+python3 train_weather.py --model_name 'AdaRNN'  --pre_epoch 40 --dw 5.0 --loss_type 'adv' --data_mode 'tdc' --data_path dataset --batch_size 10 --d_feat 1 --dataset count 
 ```
 
